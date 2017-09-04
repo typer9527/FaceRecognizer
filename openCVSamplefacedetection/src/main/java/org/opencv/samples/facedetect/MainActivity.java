@@ -1,5 +1,6 @@
 package org.opencv.samples.facedetect;
 
+import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -18,6 +19,7 @@ import android.widget.Toast;
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final String TAG = "MainActivity";
+    private static final int OPEN_CAMERA = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +51,53 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        Intent intent;
         switch (v.getId()) {
             case R.id.register:
-                intent = new Intent(this, FdActivity.class);
-                intent.putExtra("flag", FdActivity.FLAG_REGISTER);
-                startActivityForResult(intent, FdActivity.FLAG_REGISTER);
+                PermissionHelper.with(this)
+                        .requestPermission(Manifest.permission.CAMERA)
+                        .requestCode(OPEN_CAMERA)
+                        .setListener(new PermissionHelper.RequestListener() {
+                            @Override
+                            public void onGranted() {
+                                Intent intent = new Intent(MainActivity.this,
+                                        FdActivity.class);
+                                intent.putExtra("flag", FdActivity.FLAG_REGISTER);
+                                startActivityForResult(intent,
+                                        FdActivity.FLAG_REGISTER);
+                            }
+
+                            @Override
+                            public void onDenied() {
+                                Toast.makeText(MainActivity.this, "权限拒绝",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .request();
                 break;
             case R.id.verify:
-                intent = new Intent(this, FdActivity.class);
-                intent.putExtra("flag", FdActivity.FLAG_VERIFY);
-                startActivityForResult(intent, FdActivity.FLAG_VERIFY);
+                PermissionHelper.with(this)
+                        .requestPermission(Manifest.permission.CAMERA)
+                        .requestCode(OPEN_CAMERA)
+                        .setListener(new PermissionHelper.RequestListener() {
+                            @Override
+                            public void onGranted() {
+                                Intent intent = new Intent(MainActivity.this,
+                                        FdActivity.class);
+                                intent.putExtra("flag", FdActivity.FLAG_VERIFY);
+                                startActivityForResult(intent,
+                                        FdActivity.FLAG_VERIFY);
+                            }
+
+                            @Override
+                            public void onDenied() {
+                                Toast.makeText(MainActivity.this, "权限拒绝",
+                                        Toast.LENGTH_SHORT).show();
+                            }
+                        })
+                        .request();
                 break;
             case R.id.view_data:
-                intent = new Intent(this, ViewDataActivity.class);
+                Intent intent = new Intent(this, ViewDataActivity.class);
                 startActivity(intent);
                 break;
             default:
@@ -92,5 +127,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(
+            int requestCode, String[] permissions, int[] grantResults) {
+        PermissionHelper.requestPermissionResult(requestCode, grantResults);
     }
 }
