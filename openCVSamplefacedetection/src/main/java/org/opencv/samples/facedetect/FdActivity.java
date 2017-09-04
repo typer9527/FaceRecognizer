@@ -235,7 +235,6 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
         Rect rect = new Rect(
                 new Point(mGray.width() / 2 - 300, mGray.height() / 2 - 300),
                 new Size(600, 600));
-        Core.rectangle(mRgba, rect.tl(), rect.br(), FACE_RECT_COLOR);
         Log.d(TAG, "onCameraFrame: " + rect.toString());
         mGray = new Mat(mGray, rect);
 
