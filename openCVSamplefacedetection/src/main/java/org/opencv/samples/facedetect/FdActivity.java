@@ -227,13 +227,15 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
 
         mRgba = inputFrame.rgba();
         mGray = inputFrame.gray();
+        Log.e(TAG, "mGray" + mGray.width() + ":" + mGray.height());
         // 翻转矩阵以适应前置摄像头
         Core.flip(mRgba, mRgba, 1);
         Core.flip(mGray, mGray, 1);
         // 控制检测矩阵区域和大小
         Rect rect = new Rect(
-                new Point(mGray.width() / 2 - 250, mGray.height() / 2 - 250),
-                new Size(500, 500));
+                new Point(mGray.width() / 2 - 300, mGray.height() / 2 - 300),
+                new Size(600, 600));
+        Core.rectangle(mRgba, rect.tl(), rect.br(), FACE_RECT_COLOR);
         Log.d(TAG, "onCameraFrame: " + rect.toString());
         mGray = new Mat(mGray, rect);
 
@@ -260,9 +262,10 @@ public class FdActivity extends Activity implements CvCameraViewListener2 {
 
         Rect[] facesArray = faces.toArray();
         for (int i = 0; i < facesArray.length; i++) {
-            Point point = new Point(facesArray[i].x + 390, facesArray[i].y + 110);
+            // 需考虑屏幕适配, 1440*1080
+            Point point = new Point(facesArray[i].x + 420, facesArray[i].y + 220);
             facesArray[i] = new Rect(point, facesArray[i].size());
-            if (facesArray[i].height > 300 && facesArray[i].height < 400) {
+            if (facesArray[i].height > 400 && facesArray[i].height < 500) {
                 Core.rectangle(mRgba, facesArray[i].tl(), facesArray[i].br(),
                         FACE_RECT_COLOR, 3);
                 Mat faceMat = new Mat(mRgba, facesArray[i]);
